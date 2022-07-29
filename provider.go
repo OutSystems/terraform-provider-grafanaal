@@ -19,9 +19,9 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"grafana_alert_rule":          resourceAlertRule(),
-			"grafana_contact_point":       resourceContactPoints(),
-			"grafana_notification_policy": resourceNotificationPolicy(),
+			"grafanaal_rule":                resourceAlertRule(),
+			"grafanaal_contact_point":       resourceContactPoints(),
+			"grafanaal_notification_policy": resourceNotificationPolicy(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
