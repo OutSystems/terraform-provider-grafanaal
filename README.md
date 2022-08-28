@@ -1,5 +1,6 @@
 Importing provider (version.tf file):
 
+```json
 terraform {
   required_providers {
     grafanaal = {
@@ -8,14 +9,17 @@ terraform {
     }
   }
 }
+```
 
 
 Provider definition:
 
+```json
 provider "grafanaal" {
   url = "grafana_url"
   token = "grafana_token"
 }
+```
 
 
 ALERT RULE :
