@@ -104,55 +104,55 @@ func resourceAlertRule() *schema.Resource {
 	}
 }
 
-func expand(v map[string]interface{}) (readS map[string]string) {
-	readS = make(map[string]string)
-	for key, val := range v {
-		readS[key] = val.(string)
+func expandMap(mapInterface map[string]interface{}) (keyValuePair map[string]string) {
+	keyValuePair = make(map[string]string)
+	for key, val := range mapInterface {
+		keyValuePair[key] = val.(string)
 	}
 	return
 }
 
-func convertbodyAlert(d *schema.ResourceData) *AlertRule {
+func convertResourceDataToAlertRule(d *schema.ResourceData) *AlertRule {
 	alertRule := &AlertRule{}
 	if v, ok := d.GetOk("annotations"); ok {
-		alertRule.Annotations = expand(v.(map[string]interface{}))
+		alertRule.Annotations = expandMap(v.(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("condition"); ok {
 		alertRule.Condition = v.(string)
 	}
 	v := d.Get("query").([]interface{})
 
-	var querrylist []*AlertQuery
+	var queryList []*AlertQuery
 	for _, element := range v {
-		query_data := &AlertQuery{}
+		queryData := &AlertQuery{}
 		i := element.(map[string]interface{})
-		query_data.DatasourceUID = i["data_source_uid"].(string)
+		queryData.DatasourceUID = i["data_source_uid"].(string)
 
 		var jsonMap map[string]interface{}
 		json.Unmarshal([]byte(i["model"].(string)), &jsonMap)
 
-		query_data.Model = jsonMap
+		queryData.Model = jsonMap
 
-		query_data.QueryType = i["query_type"].(string)
-		query_data.RefID = i["ref_id"].(string)
-		from_to := expand(i["relative_time_range"].(map[string]interface{}))
+		queryData.QueryType = i["query_type"].(string)
+		queryData.RefID = i["ref_id"].(string)
+		fromTo := expandMap(i["relative_time_range"].(map[string]interface{}))
 
-		s_from_to := &RelativeTimeRange{}
-		from, err := strconv.ParseInt(from_to["from"], 10, 64)
+		relativeTimeRange := &RelativeTimeRange{}
+		from, err := strconv.ParseInt(fromTo["from"], 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		s_from_to.From = from
-		to, err := strconv.ParseInt(from_to["to"], 10, 64)
+		relativeTimeRange.From = from
+		to, err := strconv.ParseInt(fromTo["to"], 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		s_from_to.To = to
+		relativeTimeRange.To = to
 
-		query_data.RelativeTimeRange = *s_from_to
-		querrylist = append(querrylist, query_data)
+		queryData.RelativeTimeRange = *relativeTimeRange
+		queryList = append(queryList, queryData)
 	}
-	alertRule.Data = querrylist
+	alertRule.Data = queryList
 
 	if v, ok := d.GetOk("exec_err_state"); ok {
 		alertRule.ExecErrState = ExecErrState(v.(string))
@@ -161,24 +161,24 @@ func convertbodyAlert(d *schema.ResourceData) *AlertRule {
 		alertRule.FolderUID = v.(string)
 	}
 	if v, ok := d.GetOk("alert_id"); ok {
-		converted_int, err := strconv.ParseInt(v.(string), 10, 64)
+		convertedInt, err := strconv.ParseInt(v.(string), 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		alertRule.ID = converted_int
+		alertRule.ID = convertedInt
 	}
 	if v, ok := d.GetOk("labels"); ok {
-		alertRule.Labels = expand(v.(map[string]interface{}))
+		alertRule.Labels = expandMap(v.(map[string]interface{}))
 	}
 	if v, ok := d.GetOk("no_data_state"); ok {
 		alertRule.NoDataState = NoDataState(v.(string))
 	}
 	if v, ok := d.GetOk("org_id"); ok {
-		converted_int, err := strconv.ParseInt(v.(string), 10, 64)
+		convertedInt, err := strconv.ParseInt(v.(string), 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		alertRule.OrgID = converted_int
+		alertRule.OrgID = convertedInt
 	}
 	if v, ok := d.GetOk("rule_group"); ok {
 		alertRule.RuleGroup = v.(string)
@@ -193,11 +193,11 @@ func convertbodyAlert(d *schema.ResourceData) *AlertRule {
 		alertRule.Updated = v.(string)
 	}
 	if v, ok := d.GetOk("for_time"); ok {
-		converted_int, err := strconv.ParseInt(v.(string), 10, 64)
+		convertedInt, err := strconv.ParseInt(v.(string), 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		alertRule.ForDuration = converted_int
+		alertRule.ForDuration = convertedInt
 	}
 	if v, ok := d.GetOk("provenance"); ok {
 		alertRule.Provenance = v.(string)
@@ -209,8 +209,8 @@ func convertbodyAlert(d *schema.ResourceData) *AlertRule {
 func resourceAlertRuleCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	alertBody := convertbodyAlert(d)
-	id, err := client.NewAlertRule(alertBody)
+	alertRule := convertResourceDataToAlertRule(d)
+	id, err := client.NewAlertRule(alertRule)
 	if err != nil {
 		return err
 	}
@@ -236,8 +236,8 @@ func resourceAlertRuleRead(d *schema.ResourceData, m interface{}) error {
 func resourceAlertRuleUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	alertBody := convertbodyAlert(d)
-	err := client.UpdateAlertRule(alertBody)
+	alertRule := convertResourceDataToAlertRule(d)
+	err := client.UpdateAlertRule(alertRule)
 	if err != nil {
 		return err
 	}

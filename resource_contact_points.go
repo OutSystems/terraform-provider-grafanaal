@@ -40,27 +40,27 @@ func resourceContactPoints() *schema.Resource {
 	}
 }
 
-func convertbody(d *schema.ResourceData) *ContactPoint {
-	contactPointBody := &ContactPoint{}
+func convertResourceDataToContactPoint(d *schema.ResourceData) *ContactPoint {
+	contactPoint := &ContactPoint{}
 	if v, ok := d.GetOk("disable_resolve_message"); ok {
-		contactPointBody.DisableResolveMessage = v.(bool)
+		contactPoint.DisableResolveMessage = v.(bool)
 	}
 	if v, ok := d.GetOk("name"); ok {
-		contactPointBody.Name = v.(string)
+		contactPoint.Name = v.(string)
 	}
 	if v, ok := d.GetOk("provenance"); ok {
-		contactPointBody.Provenance = v.(string)
+		contactPoint.Provenance = v.(string)
 	}
 	if v, ok := d.GetOk("type"); ok {
-		contactPointBody.Type = v.(string)
+		contactPoint.Type = v.(string)
 	}
 	if v, ok := d.GetOk("uid"); ok {
-		contactPointBody.UID = v.(string)
+		contactPoint.UID = v.(string)
 	}
 	if v, ok := d.GetOk("settings"); ok {
-		contactPointBody.Settings = v.(map[string]interface{})
+		contactPoint.Settings = v.(map[string]interface{})
 	}
-	return contactPointBody
+	return contactPoint
 
 }
 
@@ -68,8 +68,8 @@ func resourceContactPointsCreate(d *schema.ResourceData, m interface{}) error {
 
 	client := m.(*Client)
 
-	ContactPointbody := convertbody(d)
-	id, err := client.NewContactPoint(ContactPointbody)
+	contactPoint := convertResourceDataToContactPoint(d)
+	id, err := client.NewContactPoint(contactPoint)
 	if err != nil {
 		return err
 	}
@@ -84,20 +84,20 @@ func resourceContactPointsRead(d *schema.ResourceData, m interface{}) error {
 
 	id := d.Id()
 
-	contactpoint, err := client.ContactPoint(id)
+	contactPoint, err := client.ContactPoint(id)
 	if err != nil {
 		d.SetId("")
 		return nil
 	}
-	d.SetId(contactpoint.UID)
+	d.SetId(contactPoint.UID)
 	return nil
 }
 
 func resourceContactPointsUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	ContactPointbody := convertbody(d)
-	err := client.UpdateContactPoint(ContactPointbody)
+	contactPoint := convertResourceDataToContactPoint(d)
+	err := client.UpdateContactPoint(contactPoint)
 	if err != nil {
 		return err
 	}

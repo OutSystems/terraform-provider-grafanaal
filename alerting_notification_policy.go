@@ -21,14 +21,14 @@ type SpecificPolicy struct {
 
 // NotificationPolicy fetches the notification policy tree.
 func (c *Client) NotificationPolicyTree() (SpecificPolicy, error) {
-	np := SpecificPolicy{}
-	err := c.request("GET", "/api/v1/provisioning/policies", nil, nil, &np)
-	return np, err
+	notificationPolicy := SpecificPolicy{}
+	err := c.request("GET", "/api/v1/provisioning/policies", nil, nil, &notificationPolicy)
+	return notificationPolicy, err
 }
 
 // SetNotificationPolicy sets the notification policy tree.
-func (c *Client) SetNotificationPolicyTree(np *SpecificPolicy) error {
-	req, err := json.Marshal(np)
+func (c *Client) SetNotificationPolicyTree(notificationPolicy *SpecificPolicy) error {
+	req, err := json.Marshal(notificationPolicy)
 	if err != nil {
 		return err
 	}
