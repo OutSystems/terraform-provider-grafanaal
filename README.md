@@ -24,6 +24,7 @@ description of Alert Rule Schema : https://grafana.com/docs/grafana/latest/devel
 
 Example:
 
+```json
 resource "grafanaal_rule" "exaple_rule" {
     annotations = {
         "summary": "Example Alert"
@@ -61,6 +62,7 @@ resource "grafanaal_rule" "exaple_rule" {
     title="delivary rate test < 95%"
     for_time="300000000000"
 }
+```
 
 Contact Point :
 
@@ -68,12 +70,14 @@ description of Contact Point Schema : https://grafana.com/docs/grafana/latest/de
 
 Example :
 
+```json
 resource "grafanaal_contact_point" "example_contactpoint" {
   name = "test"
   uid="test_uid"
   type= "email"
   settings={"addresses":"vikram.patil@outsystems.com","singleEmail":true}
 }
+```
 
 Notification Policy :
 
