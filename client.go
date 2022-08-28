@@ -43,11 +43,12 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 	)
 
 	// retry logic
+	req, err = c.newRequest(method, requestPath, query, body)
+	if err != nil {
+		return err
+	}
 	for n := 0; n <= 2; n++ {
-		req, err = c.newRequest(method, requestPath, query, body)
-		if err != nil {
-			return err
-		}
+
 		// Wait a bit if that's not the first request
 		if n != 0 {
 			time.Sleep(time.Second * 5)

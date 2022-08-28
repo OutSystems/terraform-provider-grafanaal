@@ -65,67 +65,67 @@ func resourceNotificationPolicy() *schema.Resource {
 	}
 }
 
-func convertNP(d *schema.ResourceData) *SpecificPolicy {
-	npbody := &SpecificPolicy{}
+func convertResourceDataToNotificationPolicy(d *schema.ResourceData) *SpecificPolicy {
+	notificationPolicy := &SpecificPolicy{}
 
 	if v, ok := d.GetOk("receiver"); ok {
-		npbody.Receiver = v.(string)
+		notificationPolicy.Receiver = v.(string)
 	}
 	if v, ok := d.GetOk("group_by_str"); ok {
-		npbody.GroupBy = v.([]string)
+		notificationPolicy.GroupBy = v.([]string)
 	}
 	if v, ok := d.GetOk("object_matchers"); ok {
 
 		var jsonMap map[string]interface{}
 		json.Unmarshal([]byte(v.(string)), &jsonMap)
-		npbody.ObjectMatchers = jsonMap
+		notificationPolicy.ObjectMatchers = jsonMap
 	}
 	if v, ok := d.GetOk("mute_time_intervals"); ok {
-		npbody.MuteTimeIntervals = v.([]string)
+		notificationPolicy.MuteTimeIntervals = v.([]string)
 	}
 	if v, ok := d.GetOk("continue"); ok {
-		npbody.Continue = v.(bool)
+		notificationPolicy.Continue = v.(bool)
 	}
 	if v, ok := d.GetOk("provenance"); ok {
-		npbody.Provenance = v.(string)
+		notificationPolicy.Provenance = v.(string)
 	}
 	if v, ok := d.GetOk("group_interval"); ok {
-		converted_int, err := strconv.ParseInt(v.(string), 10, 64)
+		convertedInt, err := strconv.ParseInt(v.(string), 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		npbody.GroupWait = converted_int
+		notificationPolicy.GroupWait = convertedInt
 	}
 	if v, ok := d.GetOk("group_wait"); ok {
-		converted_int, err := strconv.ParseInt(v.(string), 10, 64)
+		convertedInt, err := strconv.ParseInt(v.(string), 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		npbody.GroupInterval = converted_int
+		notificationPolicy.GroupInterval = convertedInt
 	}
 	if v, ok := d.GetOk("repeat_interval"); ok {
-		converted_int, err := strconv.ParseInt(v.(string), 10, 64)
+		convertedInt, err := strconv.ParseInt(v.(string), 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		npbody.RepeatInterval = converted_int
+		notificationPolicy.RepeatInterval = convertedInt
 	}
 	if v, ok := d.GetOk("routes"); ok {
 		var jsonMap map[string]interface{}
 		json.Unmarshal([]byte(v.(string)), &jsonMap)
 
-		npbody.Routes = jsonMap
+		notificationPolicy.Routes = jsonMap
 	}
 
-	return npbody
+	return notificationPolicy
 }
 
 func resourceNotificationPolicyCreate(d *schema.ResourceData, m interface{}) error {
 
 	client := m.(*Client)
 
-	npbody := convertNP(d)
-	err := client.SetNotificationPolicyTree(npbody)
+	notificationPolicy := convertResourceDataToNotificationPolicy(d)
+	err := client.SetNotificationPolicyTree(notificationPolicy)
 	if err != nil {
 		return err
 	}
@@ -140,8 +140,8 @@ func resourceNotificationPolicyRead(d *schema.ResourceData, m interface{}) error
 func resourceNotificationPolicyUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	npbody := convertNP(d)
-	err := client.SetNotificationPolicyTree(npbody)
+	notificationPolicy := convertResourceDataToNotificationPolicy(d)
+	err := client.SetNotificationPolicyTree(notificationPolicy)
 	if err != nil {
 		return err
 	}
